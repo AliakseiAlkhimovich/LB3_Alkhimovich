@@ -16,9 +16,11 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="LineThicknessComboBox" Width="120" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <ComboBox x:Name="BackgroundColorComboBox" Grid.Column="1" Width="120" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <ComboBox x:Name="ShapeLineColorComboBox" Grid.Column="2" Width="120" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Slider x:Name="LineThicknessComboBox" Minimum="1" Maximum="10" VerticalAlignment="Center"  Value="{Binding Path=TB1}"/>
+       
+        <Label Content="{Binding ElementName=LineThicknessComboBox, Path=Value}" ContentStringFormat=" {0}pt}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="25"/>
+        <ComboBox x:Name="BackgroundColorComboBox" Grid.Column="1" Width="120" VerticalAlignment="Center" HorizontalAlignment="Center" SelectedValue="{Binding Path=TB2}"/>
+        <ComboBox x:Name="ShapeLineColorComboBox" Grid.Column="2" Width="120" VerticalAlignment="Center" HorizontalAlignment="Center"  SelectedValue="{Binding Path=TB3}"/>
         <Label Content="Толщина линии" HorizontalAlignment="Center" Margin="0,15,0,0" VerticalAlignment="Top" Width="117" FontSize="10" HorizontalContentAlignment="Center"/>
         <Label Content="Цвет фона фигуры" HorizontalAlignment="Center" Margin="0,15,0,0" VerticalAlignment="Top" Width="116" Grid.Column="1" FontSize="10" HorizontalContentAlignment="Center"/>
         <Label Content="Цвет линии фигуры" HorizontalAlignment="Left" Margin="8,15,0,0" VerticalAlignment="Top" Width="116" Grid.Column="2" FontSize="10" HorizontalContentAlignment="Center"/>
