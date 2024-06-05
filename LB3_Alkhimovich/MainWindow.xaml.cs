@@ -7,22 +7,38 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.IO;
+using System.Collections.Generic;
 
 namespace LB3_Alkhimovich
 {
     public partial class MainWindow : Window
     {
-        private Setting settingsWindow;
+        // private Setting settingsWindow;
+
+        public Params Params;
 
         public MainWindow()
         {
             InitializeComponent();
+            Params = new Params();
+            this.DataContext = Params;
             Loaded += (s, e) => drawingCanvas.Focus();
-            CommandBinding saveCommandBinding = new CommandBinding(
-            ApplicationCommands.Save,
-            Save_Executed,
-            Save_CanExecute);
-            this.CommandBindings.Add(saveCommandBinding);
+            CommandBinding saveCommandBinding = new CommandBinding(ApplicationCommands.Save, Save_Executed, Save_CanExecute);
+
+            CommandBinding openCommandBinding = new CommandBinding(ApplicationCommands.Open, Open_Executed);
+
+            CommandBinding newCommandBinding = new CommandBinding(ApplicationCommands.New, New_Executed);
+
+            CommandBinding propCommandBinding = new CommandBinding(ApplicationCommands.Properties, Properties_Executed);
+
+            List<CommandBinding> list = new List<CommandBinding> {
+        saveCommandBinding,
+        openCommandBinding,
+        newCommandBinding,
+        propCommandBinding
+      };
+            this.CommandBindings.AddRange(list);
+
         }
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -37,51 +53,55 @@ namespace LB3_Alkhimovich
         {
             Polygon star = new Polygon
             {
-                Stroke = (Brush)new BrushConverter().ConvertFromString(TB3.Text),
-                Fill = (Brush)new BrushConverter().ConvertFromString(TB2.Text),
-                StrokeThickness = int.Parse(TB1.Text)
+                Stroke = new SolidColorBrush(Params.TB3),
+                Fill = new SolidColorBrush(Params.TB2),
+                StrokeThickness = Params.TB1
             };
 
             // Определение точек для четырехконечной звезды
-            PointCollection points = new PointCollection
-            {
+            PointCollection points = new PointCollection {
         new Point(position.X, position.Y - 70), // Верхняя точка
-        new Point(position.X + 10, position.Y - 10), // Правая верхняя точка
-        new Point(position.X + 70, position.Y), // Правая точка
-        new Point(position.X + 10, position.Y + 10), // Правая нижняя точка
-        new Point(position.X, position.Y + 70), // Нижняя точка
-        new Point(position.X - 10, position.Y + 10), // Левая нижняя точка
-        new Point(position.X - 70, position.Y), // Левая точка
-        new Point(position.X - 10, position.Y - 10) // Левая верхняя точка
-            };
+          new Point(position.X + 10, position.Y - 10), // Правая верхняя точка
+          new Point(position.X + 70, position.Y), // Правая точка
+          new Point(position.X + 10, position.Y + 10), // Правая нижняя точка
+          new Point(position.X, position.Y + 70), // Нижняя точка
+          new Point(position.X - 10, position.Y + 10), // Левая нижняя точка
+          new Point(position.X - 70, position.Y), // Левая точка
+          new Point(position.X - 10, position.Y - 10) // Левая верхняя точка
+      };
 
             star.Points = points;
             drawingCanvas.Children.Add(star);
         }
-        private void NewFile_Click(object sender, RoutedEventArgs e)
+
+        void newfile()
         {
             drawingCanvas.Children.Clear();
             this.Title = "Графический Редактор";
         }
-        private void OpenSettings_Click(object sender, RoutedEventArgs e)
+        private void NewFile_Click(object sender, RoutedEventArgs e)
         {
-            if (settingsWindow == null || !settingsWindow.IsLoaded)
+            newfile();
+        }
+
+        void prop()
+        {
+            //if (settingsWindow == null || !settingsWindow.IsLoaded)
+            //{
+
+            Setting settingsWindow = new Setting(Params);
+            if (settingsWindow.ShowDialog() == false)
             {
-                settingsWindow = new Setting();
-                settingsWindow.Show();
-            }
-            else
-            {
-                settingsWindow.Focus(); // Если окно уже открыто, просто перевести на него фокус
+                Params.TB1 = settingsWindow.tB1;
+                Params.TB2 = settingsWindow.tB2;
+                Params.TB3 = settingsWindow.tB3;
+                this.DataContext = null;
+                this.DataContext = Params;
             }
         }
-        public void CloseSettingsWindow()
+        private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
-            if (settingsWindow != null)
-            {
-                settingsWindow.Close();
-                settingsWindow = null; // Обнуляем ссылку после закрытия окна
-            }
+            prop();
         }
 
         private void ShowMouseCoordinates(Point mousePosition)
@@ -101,7 +121,6 @@ namespace LB3_Alkhimovich
             Close();
         }
 
-
         // Обработчик возможности выполнения команды Save
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -109,8 +128,7 @@ namespace LB3_Alkhimovich
             e.CanExecute = drawingCanvas.Children.Count != 0;
         }
 
-        // Обработчик выполнения команды Save
-        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
+        void save()
         {
             SaveFileDialog sfd = new SaveFileDialog
             {
@@ -122,6 +140,28 @@ namespace LB3_Alkhimovich
                 // Логика сохранения данных в файл
                 SaveDataToFile(sfd.FileName);
             }
+        }
+
+        // Обработчик выполнения команды Save
+        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            save();
+        }
+
+        // Обработчик выполнения команды Save
+        private void Open_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            open();
+        }
+
+        private void New_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            newfile();
+        }
+
+        private void Properties_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            prop();
         }
 
         // Метод для сохранения данных в файл
@@ -156,7 +196,7 @@ namespace LB3_Alkhimovich
             this.Title = fileName;
         }
 
-        private void LoadDataFromFile_Click(object sender, RoutedEventArgs e)
+        void open()
         {
             OpenFileDialog ofd = new OpenFileDialog
             {
@@ -171,66 +211,71 @@ namespace LB3_Alkhimovich
             }
         }
 
+        private void LoadDataFromFile_Click(object sender, RoutedEventArgs e)
+        {
+            open();
+        }
+
         private void LoadData(string fileName)
         {
-           
-                // Читаем все строки из файла
-                string[] lines = File.ReadAllLines(fileName);
 
-                // Переменные для хранения информации о фигуре
-                Color strokeColor = Colors.Black;
-                Color fillColor = Colors.Transparent;
-                double strokeThickness = 1.0;
-                PointCollection points = new PointCollection();
+            // Читаем все строки из файла
+            string[] lines = File.ReadAllLines(fileName);
 
-                // Перебираем строки файла
-                foreach (string line in lines)
+            // Переменные для хранения информации о фигуре
+            Color strokeColor = Colors.Black;
+            Color fillColor = Colors.Transparent;
+            double strokeThickness = 1.0;
+            PointCollection points = new PointCollection();
+
+            // Перебираем строки файла
+            foreach (string line in lines)
+            {
+                if (line.StartsWith("Star"))
                 {
-                    if (line.StartsWith("Star"))
-                    {
-                        // Если начинается новая фигура, сбрасываем точки
-                        points = new PointCollection();
-                    }
-                    else if (line.StartsWith("Stroke:"))
-                    {
-                        // Извлекаем цвет обводки
-                        strokeColor = (Color)ColorConverter.ConvertFromString(line.Replace("Stroke:", "").Trim());
-                    }
-                    else if (line.StartsWith("Fill:"))
-                    {
-                        // Извлекаем цвет заливки
-                        fillColor = (Color)ColorConverter.ConvertFromString(line.Replace("Fill:", "").Trim());
-                    }
-                    else if (line.StartsWith("StrokeThickness:"))
-                    {
-                        // Извлекаем толщину обводки
-                        strokeThickness = double.Parse(line.Replace("StrokeThickness:", "").Trim());
-                    }
-                    else if (line.StartsWith("Points:"))
-                    {
-                        // Ничего не делаем, следующие строки будут точками
-                    }
-                    else if (line.Trim() == "")
-                    {
-                        // Если строка пустая, создаем фигуру и добавляем на Canvas
-                        Polygon polygon = new Polygon
-                        {
-                            Stroke = new SolidColorBrush(strokeColor),
-                            Fill = new SolidColorBrush(fillColor),
-                            StrokeThickness = strokeThickness,
-                            Points = points
-                        };
-                        drawingCanvas.Children.Add(polygon);
-                    }
-                    else
-                    {
-                        // Извлекаем точки и добавляем в коллекцию
-                        string[] pointData = line.Split(',');
-                        Point point = new Point(double.Parse(pointData[0]), double.Parse(pointData[1]));
-                        points.Add(point);
-                    }
+                    // Если начинается новая фигура, сбрасываем точки
+                    points = new PointCollection();
                 }
-                this.Title = fileName;
+                else if (line.StartsWith("Stroke:"))
+                {
+                    // Извлекаем цвет обводки
+                    strokeColor = (Color)ColorConverter.ConvertFromString(line.Replace("Stroke:", "").Trim());
+                }
+                else if (line.StartsWith("Fill:"))
+                {
+                    // Извлекаем цвет заливки
+                    fillColor = (Color)ColorConverter.ConvertFromString(line.Replace("Fill:", "").Trim());
+                }
+                else if (line.StartsWith("StrokeThickness:"))
+                {
+                    // Извлекаем толщину обводки
+                    strokeThickness = double.Parse(line.Replace("StrokeThickness:", "").Trim());
+                }
+                else if (line.StartsWith("Points:"))
+                {
+                    // Ничего не делаем, следующие строки будут точками
+                }
+                else if (line.Trim() == "")
+                {
+                    // Если строка пустая, создаем фигуру и добавляем на Canvas
+                    Polygon polygon = new Polygon
+                    {
+                        Stroke = new SolidColorBrush(strokeColor),
+                        Fill = new SolidColorBrush(fillColor),
+                        StrokeThickness = strokeThickness,
+                        Points = points
+                    };
+                    drawingCanvas.Children.Add(polygon);
+                }
+                else
+                {
+                    // Извлекаем точки и добавляем в коллекцию
+                    string[] pointData = line.Split(',');
+                    Point point = new Point(double.Parse(pointData[0]), double.Parse(pointData[1]));
+                    points.Add(point);
+                }
+            }
+            this.Title = fileName;
         }
     }
 }
