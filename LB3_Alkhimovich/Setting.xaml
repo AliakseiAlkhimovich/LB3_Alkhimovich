@@ -1,0 +1,28 @@
+﻿<Window x:Class="LB3_Alkhimovich.Setting"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LB3_Alkhimovich"
+        mc:Ignorable="d"
+        Title="Параметры фигуры" Height="244" Width="411" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid Margin="0,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <ComboBox x:Name="LineThicknessComboBox" Width="120" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <ComboBox x:Name="BackgroundColorComboBox" Grid.Column="1" Width="120" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <ComboBox x:Name="ShapeLineColorComboBox" Grid.Column="2" Width="120" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Label Content="Толщина линии" HorizontalAlignment="Center" Margin="0,15,0,0" VerticalAlignment="Top" Width="117" FontSize="10" HorizontalContentAlignment="Center"/>
+        <Label Content="Цвет фона фигуры" HorizontalAlignment="Center" Margin="0,15,0,0" VerticalAlignment="Top" Width="116" Grid.Column="1" FontSize="10" HorizontalContentAlignment="Center"/>
+        <Label Content="Цвет линии фигуры" HorizontalAlignment="Left" Margin="8,15,0,0" VerticalAlignment="Top" Width="116" Grid.Column="2" FontSize="10" HorizontalContentAlignment="Center"/>
+        <Button Grid.Column="2" Content="Применить" Click="Button_Click" Background="#FF5EFBFF" FontSize="18" FontFamily="Arial" FontWeight="Bold" FontStyle="Italic" Margin="5,60,5,15" Grid.Row="1"/>
+
+    </Grid>
+</Window>
