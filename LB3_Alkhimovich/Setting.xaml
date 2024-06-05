@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LB3_Alkhimovich"
         mc:Ignorable="d"
-        Title="Параметры фигуры" Height="244" Width="411" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Параметры фигуры" Height="244" Width="411" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="/png-clipart-computer-icons-writing-drawing-graphics-editor-angle-pencil.png">
     <Grid Margin="0,0,0,0">
         <Grid.RowDefinitions>
             <RowDefinition/>
