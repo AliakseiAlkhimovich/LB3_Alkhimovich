@@ -19,6 +19,9 @@ namespace LB3_Alkhimovich
 
         public MainWindow()
         {
+            SplashScreen splash = new SplashScreen("1056985.png");
+            splash.Show(true, true);
+
             InitializeComponent();
             Params = new Params();
             this.DataContext = Params;
@@ -183,7 +186,7 @@ namespace LB3_Alkhimovich
                     sb.AppendLine($"Points:");
                     foreach (var point in polygon.Points)
                     {
-                        sb.AppendLine($"{point.X},{point.Y}");
+                        sb.AppendLine($"{point.X};{point.Y}");
                     }
                     sb.AppendLine(); // Добавляем пустую строку для разделения фигур
                 }
@@ -270,7 +273,7 @@ namespace LB3_Alkhimovich
                 else
                 {
                     // Извлекаем точки и добавляем в коллекцию
-                    string[] pointData = line.Split(',');
+                    string[] pointData = line.Split(';');
                     Point point = new Point(double.Parse(pointData[0]), double.Parse(pointData[1]));
                     points.Add(point);
                 }
